@@ -1,0 +1,11 @@
+{
+  "name": "brandom-tam-website",
+  "version": "1.0.0",
+  "description": "Personal website for brandon tam",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ali Waseem",
+  "license": "ISC"
+}
