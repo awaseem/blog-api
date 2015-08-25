@@ -3,13 +3,16 @@
  */
 
 let express = require("express");
+let mongoose = require("mongoose");
+let databaseConfig = require("./config/database");
+let publicApi = require("./api/publicApi");
 let app = express();
 
-app.get("/", function (req, res) {
-    //res.sendFile("/Users/awaseem/Sandbox/Websites/brandom-tam-website/build/static/html/index.html");
-    //res.send("hello world");
-    res.sendFile(`${__dirname}/public/html/index.html`);
-});
+app.use(express.static(`${__dirname}/public`));
+
+mongoose.connect(databaseConfig.url);
+
+app.use("/api", publicApi);
 
 let server = app.listen(3000, function () {
     console.log("App Running on localhost:3000");

@@ -9,7 +9,8 @@
   "author": "Ali Waseem",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.13.3"
+    "express": "^4.13.3",
+    "mongoose": "^4.1.3"
   },
   "devDependencies": {
     "gulp": "^3.9.0",
