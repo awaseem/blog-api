@@ -4,11 +4,16 @@
 
 let express = require("express");
 let mongoose = require("mongoose");
+let bodyparser = require("body-parser");
 let databaseConfig = require("./config/database");
 let publicApi = require("./api/publicApi");
 let app = express();
 
 app.use(express.static(`${__dirname}/public`));
+app.use(bodyparser.urlencoded({
+    extended: true
+}));
+app.use(bodyparser.json());
 
 mongoose.connect(databaseConfig.url);
 
