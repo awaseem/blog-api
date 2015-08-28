@@ -9,9 +9,9 @@ router.get("/album", (req, res) => {
         "createdOn": {
             "$lte": dateQuery
         }
-    }, null, { sort: {createdOn: -1} }, (err, results) => {
+    }, null, { sort: {createdOn: -1}, limit: 9 }, (err, results) => {
         if (err) {
-            return next(err);
+            return res.status(400).json({ message: "Error: could not find albums"});
         }
         res.json(results);
     });
@@ -25,23 +25,6 @@ router.get("/album/:id", (req, res) => {
                 .json({ message: `Error: could not find album with id: ${req.params.id}`});
         }
         res.json(results);
-    });
-});
-
-// Route just to test inserting data
-router.post("/album", (req, res) => {
-    let newAlbum = new albumModel();
-    newAlbum.title = req.body.title;
-    newAlbum.description = req.body.description;
-    newAlbum.images = [req.body.image];
-
-    newAlbum.save((err) => {
-        if (err) {
-            return res
-                .status(400)
-                .json({ message: "Error: could not add album data to server"});
-        }
-        res.json( { message: "Added album", data: newAlbum});
     });
 });
 
