@@ -17,7 +17,7 @@ router.post("/auth", (req, res) => {
         "user.username": req.body.username
     }, (err, user) => {
         if (err) {
-            return res.status(400).json({ message: "Error occurred while finding user"});
+            return res.status(500).json({ message: "Error occurred while finding user"});
         }
         if (!user) {
             return res.status(400).json({ message: "Auth Failed: could not find user"});
@@ -27,7 +27,7 @@ router.post("/auth", (req, res) => {
                 return res.status(400).json({ message: "Auth Failed: wrong password"});
             }
             else {
-                let accessToken = jwt.sign(user, jwtConfig.secret, {
+                let accessToken = jwt.sign(user._id, jwtConfig.secret, {
                     expiresInMinutes: 10
                 });
 
@@ -42,10 +42,10 @@ router.use((req, res, next) => {
     if (token) {
         jwt.verify(token, jwtConfig.secret, (err, decoded) => {
             if (err) {
-                return res.status(400).json({ message: "Error: Failed to authenticate token."})
+                return res.status(500).json({ message: "Error: Failed to authenticate token."})
             }
             else {
-                req.decoded = decoded.user.username;
+                req.decoded = decoded.user;
                 next();
             }
         });
@@ -67,11 +67,36 @@ router.post("/album", (req, res) => {
 
     newAlbum.save((err) => {
         if (err) {
-            return res
-                .status(400)
-                .json({ message: "Error: could not add album data to server"});
+            return res.status(500).json({ message: "Error: could not add album data to server"});
         }
         res.json( { message: "Added album", data: newAlbum});
+    });
+});
+
+router.put("/album", (req, res) => {
+    let albumId = req.body.id;
+    if ( !albumId ) {
+        return res.status(400).json({ message: "Error: no id given for album update"})
+    }
+    albumModel.findById(albumId, (album, err) => {
+        if (err) {
+           return res.status(500).json({ message: "Error: failed to find user"})
+        }
+        if (req.body.title) {
+            album.title = req.body.title;
+        }
+        if (req.body.description) {
+            album.description = req.body.description;
+        }
+        if (req.body.images) {
+            album.images = req.body.images;
+        }
+        album.save((err) => {
+            if (err) {
+                return res.status(500).json({ message: "Error: failed to update album" });
+            }
+            return res.json({ message: `Updated album: ${album._id}`})
+        });
     });
 });
 
