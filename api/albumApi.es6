@@ -1,10 +1,36 @@
 
-let albumModel = require("../models/album");
-let superuserModel = require("../models/superuser");
-let jwtConfig = require("../config/jwt");
-let express = require("express");
-let jwt = require("jsonwebtoken");
+import { albumModel } from "../models/album";
+import { superuserModel } from "../models/superuser";
+import { auth } from "../middlewares/authentication"
+import jwtConfig from "../config/jwt";
+import express from "express";
+import jwt from "jsonwebtoken";
 let router = express.Router();
+
+router.get("/album", (req, res) => {
+    let dateQuery = req.query.date ? new Date(req.query.date) : new Date();
+    albumModel.find({
+        "createdOn": {
+            "$lte": dateQuery
+        }
+    }, null, { sort: {createdOn: -1}, limit: 9 }, (err, results) => {
+        if (err) {
+            return res.status(400).json({ message: "Error: could not find albums"});
+        }
+        res.json(results);
+    });
+});
+
+router.get("/album/:id", (req, res) => {
+    albumModel.findById(req.params.id, (err, results) => {
+        if (err) {
+            return res
+                .status(404)
+                .json({ message: `Error: could not find album with id: ${req.params.id}`});
+        }
+        res.json(results);
+    });
+});
 
 router.post("/auth", (req, res) => {
     if (!req.body.username) {
@@ -27,7 +53,7 @@ router.post("/auth", (req, res) => {
                 return res.status(400).json({ message: "Auth Failed: wrong password"});
             }
             else {
-                let accessToken = jwt.sign(user._id, jwtConfig.secret, {
+                let accessToken = jwt.sign( { data: user._id }, jwtConfig.secret, {
                     expiresInMinutes: 10
                 });
 
@@ -37,23 +63,7 @@ router.post("/auth", (req, res) => {
     })
 });
 
-router.use((req, res, next) => {
-    var token = req.body.token || req.query.token || req.headers['x-access-token'];
-    if (token) {
-        jwt.verify(token, jwtConfig.secret, (err, decoded) => {
-            if (err) {
-                return res.status(500).json({ message: "Error: Failed to authenticate token."})
-            }
-            else {
-                req.decoded = decoded.user;
-                next();
-            }
-        });
-    }
-    else {
-        return res.status(403).json({ message: "Yo buddy guy you need a token!!!"});
-    }
-});
+router.use(auth);
 
 // Route just to test inserting data
 router.post("/album", (req, res) => {
@@ -78,9 +88,9 @@ router.put("/album", (req, res) => {
     if ( !albumId ) {
         return res.status(400).json({ message: "Error: no id given for album update"})
     }
-    albumModel.findById(albumId, (album, err) => {
+    albumModel.findById(albumId, (err, album) => {
         if (err) {
-           return res.status(500).json({ message: "Error: failed to find user"})
+            return res.status(500).json({ message: "Error: failed to find album"})
         }
         if (req.body.title) {
             album.title = req.body.title;
@@ -95,9 +105,9 @@ router.put("/album", (req, res) => {
             if (err) {
                 return res.status(500).json({ message: "Error: failed to update album" });
             }
-            return res.json({ message: `Updated album: ${album._id}`})
+            return res.json({ message: `Updated album: ${album._id}`, data: album});
         });
     });
 });
 
-module.exports = router;
+export { router };

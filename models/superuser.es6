@@ -1,11 +1,15 @@
 
-let mongoose = require("mongoose");
-let bcrypt = require("bcrypt-nodejs");
+import mongoose from "mongoose";
+import bcrypt from "bcrypt-nodejs";
 
 let superUserSchema = mongoose.Schema({
     user: {
         username: String,
         password: String
+    },
+    group: {
+        name: String,
+        description: String
     }
 });
 
@@ -17,4 +21,6 @@ superUserSchema.methods.validPassword = function (password) {
     return bcrypt.compareSync(password, this.user.password);
 };
 
-module.exports = mongoose.model("superUser", superUserSchema);
+let superuserModel = mongoose.model("superUser", superUserSchema);
+
+export { superuserModel };

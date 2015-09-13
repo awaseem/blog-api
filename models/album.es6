@@ -1,5 +1,5 @@
 
-let mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 let album = new mongoose.Schema({
     title: String,
@@ -16,4 +16,6 @@ album.pre("save", function (next) {
     next();
 });
 
-module.exports = mongoose.model("album", album);
+let albumModel = mongoose.model("album", album);
+
+export { albumModel };
