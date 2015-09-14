@@ -5,7 +5,8 @@ let album = new mongoose.Schema({
     title: String,
     createdOn: Date,
     description: String,
-    images: [String]
+    images: [String],
+    group: String
 });
 
 album.pre("save", function (next) {

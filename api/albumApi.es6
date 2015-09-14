@@ -7,9 +7,18 @@ import express from "express";
 import jwt from "jsonwebtoken";
 let router = express.Router();
 
-router.get("/album", (req, res) => {
+// Public routes
+
+/**
+ * "/" GET allows you to get all albums in the database.
+ * They can be filtered out by group.
+ * Each query is limited to 9 results, to get more simply pass the last results date to a new get request to retrieve the next 9.
+ */
+router.get("/", (req, res) => {
     let dateQuery = req.query.date ? new Date(req.query.date) : new Date();
+    let group = req.query.group;
     albumModel.find({
+        "group": group,
         "createdOn": {
             "$lte": dateQuery
         }
@@ -21,7 +30,10 @@ router.get("/album", (req, res) => {
     });
 });
 
-router.get("/album/:id", (req, res) => {
+/**
+ * "/:id" GET allows you to retrieve one album item based on the database id
+ */
+router.get("/:id", (req, res) => {
     albumModel.findById(req.params.id, (err, results) => {
         if (err) {
             return res
@@ -32,48 +44,29 @@ router.get("/album/:id", (req, res) => {
     });
 });
 
-router.post("/auth", (req, res) => {
-    if (!req.body.username) {
-        return res.status(400).json({ message: "Error: No user given!"});
-    }
-    if (!req.body.password) {
-        return res.status(400).json({ message: "Error: no password given!"})
-    }
-    superuserModel.findOne({
-        "user.username": req.body.username
-    }, (err, user) => {
-        if (err) {
-            return res.status(500).json({ message: "Error occurred while finding user"});
-        }
-        if (!user) {
-            return res.status(400).json({ message: "Auth Failed: could not find user"});
-        }
-        else if (user) {
-            if (!user.validPassword(req.body.password)) {
-                return res.status(400).json({ message: "Auth Failed: wrong password"});
-            }
-            else {
-                let accessToken = jwt.sign( { data: user._id }, jwtConfig.secret, {
-                    expiresInMinutes: 10
-                });
-
-                return res.json({ message: "Enjoy the token!", token: accessToken });
-            }
-        }
-    })
-});
+// Private Api
 
 router.use(auth);
 
-// Route just to test inserting data
-router.post("/album", (req, res) => {
+/**
+ * "/" POST allows you to add a new album.
+ * parameters:
+ * Title (String): name of album
+ * Description (String): short summary about the album
+ * Images (String): a list of image urls that within the album
+ */
+router.post("/", (req, res) => {
     if ( !req.body.title || !req.body.description || (!req.body.images && !Array.isArray(req.body.images))) {
         return res.status(400).json({ message: "Error: invalid parameters"});
+    }
+    else if (!req.decoded.group) {
+        return res.status(500).json({ message: "Error: could not find user group!"})
     }
     let newAlbum = new albumModel();
     newAlbum.title = req.body.title;
     newAlbum.description = req.body.description;
     newAlbum.images = req.body.images;
+    newAlbum.group = req.decoded.group;
 
     newAlbum.save((err) => {
         if (err) {
@@ -83,7 +76,10 @@ router.post("/album", (req, res) => {
     });
 });
 
-router.put("/album", (req, res) => {
+/**
+ * "/" PUT allows you to update the album based on what parameters are presented
+ */
+router.put("/", (req, res) => {
     let albumId = req.body.id;
     if ( !albumId ) {
         return res.status(400).json({ message: "Error: no id given for album update"})
