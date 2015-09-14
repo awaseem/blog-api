@@ -12,6 +12,7 @@
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.13.3",
     "express": "^4.13.3",
+    "imgur": "^0.1.6",
     "jsonwebtoken": "^5.0.5",
     "mongoose": "^4.1.3"
   },
