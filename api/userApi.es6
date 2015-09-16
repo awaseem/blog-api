@@ -15,7 +15,7 @@ router.post("/signin", (req, res) => {
         return res.status(400).json({ message: "Error: No user given!"});
     }
     if (!req.body.password) {
-        return res.status(400).json({ message: "Error: no password given!"})
+        return res.status(400).json({ message: "Error: no password given!"});
     }
     superuserModel.findOne({
         "user.username": req.body.username
@@ -58,7 +58,10 @@ router.post("/signup", (req, res) => {
                 return res.status(500).json({ message: "Error: server barfed when trying to check username duplicates"});
             }
             if (user) {
-                return res.status(400).json({ message: "Error: username already exists!"})
+                return res.status(400).json({ message: "Error: username already exists!"});
+            }
+            if (!req.body.groupName || !req.body.groupDescription) {
+                return res.status(400).json({ message: "Error: group or group description not given"});
             }
             let newSuperUser = new superuserModel();
             newSuperUser.user.username = req.body.username;
@@ -68,7 +71,7 @@ router.post("/signup", (req, res) => {
 
             newSuperUser.save((err) => {
                 if (err) {
-                    return res.status(500).json({ message: "Error: failed to add user!"})
+                    return res.status(500).json({ message: "Error: failed to add user!"});
                 }
                 else {
                     return res.json({ message: "Added user to database!" });
@@ -81,4 +84,4 @@ router.post("/signup", (req, res) => {
     }
 });
 
-export { router }
+export { router };

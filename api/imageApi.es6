@@ -28,14 +28,30 @@ router.get("/", (req, res) => {
 router.use(auth);
 
 router.post("/", (req, res) => {
-    let imageData = req.body.data;
+    let imageData = req.body.image;
     imgur.uploadBase64(imageData)
         .then((json) => {
-            res.json(json);
+            let newImage = new imageModel();
+
+            newImage.name = req.body.name;
+            newImage.url = json.url;
+            newImage.description = req.body.description;
+            newImage.group = req.user.group;
+
+            newImage.save((err) => {
+                if (err) {
+                    return res.status(500).json({ message: `Error: could not save image data due to the following error: ${err.message}`});
+                }
+                res.json( { message: "Added image!", data: newImage});
+            })
         })
         .catch((err) => {
-            res.json(err);
+            res.status(503).json({ message: `Error: could not upload image to imgur because of the following error ${err.message}`});
         });
+});
+
+router.put("/", (req, res) => {
+    //TODO add put method for updating images
 });
 
 export { router };

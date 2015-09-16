@@ -36,9 +36,7 @@ router.get("/", (req, res) => {
 router.get("/:id", (req, res) => {
     albumModel.findById(req.params.id, (err, results) => {
         if (err) {
-            return res
-                .status(404)
-                .json({ message: `Error: could not find album with id: ${req.params.id}`});
+            return res.status(404).json({ message: `Error: could not find album with id: ${req.params.id}`});
         }
         res.json(results);
     });
@@ -59,14 +57,11 @@ router.post("/", (req, res) => {
     if ( !req.body.title || !req.body.description || (!req.body.images && !Array.isArray(req.body.images))) {
         return res.status(400).json({ message: "Error: invalid parameters"});
     }
-    else if (!req.decoded.group) {
-        return res.status(500).json({ message: "Error: could not find user group!"})
-    }
     let newAlbum = new albumModel();
     newAlbum.title = req.body.title;
     newAlbum.description = req.body.description;
     newAlbum.images = req.body.images;
-    newAlbum.group = req.decoded.group;
+    newAlbum.group = req.user.group;
 
     newAlbum.save((err) => {
         if (err) {
