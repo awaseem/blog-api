@@ -22,6 +22,9 @@ app.use(bodyparser.json({
 
 mongoose.connect(databaseConfig.url);
 
+app.get("/", (req, res) => {
+    res.sendFile(__dirname + "/public/html/index.html");
+});
 app.use("/api/user", userApi);
 app.use("/api/album", albumApi);
 app.use("/api/image", imageApi);

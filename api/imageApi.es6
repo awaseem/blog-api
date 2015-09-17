@@ -1,11 +1,14 @@
 
 import express from "express";
 import imgur from "imgur";
+import multer from "multer";
+import path from "path";
 import imgurConfig from "../config/imgur";
 import { imageModel } from "../models/image";
 import { auth } from "../middlewares/authentication";
 
 let router = express.Router();
+let upload = multer({ dest: "build/uploads/" });
 
 imgur.setClientId(imgurConfig.clientId);
 
@@ -23,6 +26,18 @@ router.get("/", (req, res) => {
         }
         res.json(results);
     });
+});
+
+router.post("/test", upload.array("photo"), (req, res) => {
+    imgur.uploadFile(`${ path.dirname(require.main.filename) }/uploads/${ req.files[0].filename }`)
+        .then((json) => {
+            console.log(json);
+            res.json({ message: "Added album data" });
+        })
+        .catch((err) => {
+            console.log(err);
+            res.json({ message: "Error"});
+        });
 });
 
 router.use(auth);
