@@ -7,7 +7,8 @@ let image = mongoose.Schema({
     name: String,
     url: String,
     description: String,
-    group: String
+    group: String,
+    imgurData: String
 });
 
 let imageModel = mongoose.model("image", image);

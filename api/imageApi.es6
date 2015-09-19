@@ -6,6 +6,7 @@ import path from "path";
 import imgurConfig from "../config/imgur";
 import { imageModel } from "../models/image";
 import { auth } from "../middlewares/authentication";
+import { createImages, removeImages } from "../utils/imageApiUtils";
 
 let router = express.Router();
 let upload = multer({ dest: "build/uploads/" });
@@ -28,40 +29,45 @@ router.get("/", (req, res) => {
     });
 });
 
-router.post("/test", upload.array("photo"), (req, res) => {
-    imgur.uploadFile(`${ path.dirname(require.main.filename) }/uploads/${ req.files[0].filename }`)
-        .then((json) => {
-            console.log(json);
-            res.json({ message: "Added album data" });
-        })
-        .catch((err) => {
-            console.log(err);
-            res.json({ message: "Error"});
-        });
-});
-
 router.use(auth);
 
-router.post("/", (req, res) => {
-    let imageData = req.body.image;
-    imgur.uploadBase64(imageData)
-        .then((json) => {
-            let newImage = new imageModel();
+router.post("/", upload.single("photo"), (req, res) => {
+    // Post request validation
+    if ( !req.body.name && !req.body.description && !req.file.length ) {
+        res.status(400).json({ message: "Error: missing parameters that are required to upload images"})
+    }
 
-            newImage.name = req.body.name;
-            newImage.url = json.url;
-            newImage.description = req.body.description;
-            newImage.group = req.user.group;
+    // Uplaod images
+    let image = `${ path.dirname(require.main.filename) }/uploads/${ req.file.filename }`;
+    imgur.uploadFile(image)
+        .then( (json) => {
+            let newImageObj = new imageModel();
 
-            newImage.save((err) => {
+            newImageObj.name = req.body.name;
+            newImageObj.description = req.body.description;
+            newImageObj.url = json.data.link;
+            newImageObj.imgurData = JSON.stringify(json);
+            newImageObj.group = req.user.group;
+
+            newImageObj.save( (err) => {
                 if (err) {
-                    return res.status(500).json({ message: `Error: could not save image data due to the following error: ${err.message}`});
+                    res.status(500).json({
+                        message: `Error: failed to save image to database, sending the image url`,
+                        data: json.link
+                    });
                 }
-                res.json( { message: "Added image!", data: newImage});
+                else {
+                    res.json({ message: "Added image to database", data: newImageObj});
+                }
+                fs.unlink(image, (err) => {
+                    if (err) {
+                        console.log(err.message); //TODO Add better logging for error handling
+                    }
+                })
             })
         })
-        .catch((err) => {
-            res.status(503).json({ message: `Error: could not upload image to imgur because of the following error ${err.message}`});
+        .catch( (err) => {
+            res.json({ message: `Error: The following error: ${err.message}`});
         });
 });
 
