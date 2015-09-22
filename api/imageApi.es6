@@ -1,7 +1,6 @@
 
 import express from "express";
 import imgur from "imgur";
-import multer from "multer";
 import path from "path";
 import imgurConfig from "../config/imgur";
 import { imageModel } from "../models/image";
@@ -9,7 +8,6 @@ import { auth } from "../middlewares/authentication";
 import { createImages, removeImages } from "../utils/imageApiUtils";
 
 let router = express.Router();
-let upload = multer({ dest: "build/uploads/" });
 
 imgur.setClientId(imgurConfig.clientId);
 
@@ -17,7 +15,6 @@ router.get("/", (req, res) => {
     let dateQuery = req.query.date ? new Date(req.query.date) : new Date();
     let group = req.query.group;
     imageModel.find({
-        "group": group,
         "createdOn": {
             "$lte": dateQuery
         }
@@ -31,15 +28,15 @@ router.get("/", (req, res) => {
 
 router.use(auth);
 
-router.post("/", upload.single("photo"), (req, res) => {
+router.post("/", (req, res) => {
     // Post request validation
-    if ( !req.body.name && !req.body.description && !req.file.length ) {
-        res.status(400).json({ message: "Error: missing parameters that are required to upload images"})
+    if ( !req.body.name || !req.body.description || !req.body.imageData ) {
+        return res.status(400).json({ message: "Error: missing parameters that are required to upload images"})
     }
 
+    let image = req.body.imageData;
     // Uplaod images
-    let image = `${ path.dirname(require.main.filename) }/uploads/${ req.file.filename }`;
-    imgur.uploadFile(image)
+    imgur.uploadBase64(image)
         .then( (json) => {
             let newImageObj = new imageModel();
 
@@ -53,21 +50,16 @@ router.post("/", upload.single("photo"), (req, res) => {
                 if (err) {
                     res.status(500).json({
                         message: `Error: failed to save image to database, sending the image url`,
-                        data: json.link
+                        data: json.data.link
                     });
                 }
                 else {
                     res.json({ message: "Added image to database", data: newImageObj});
                 }
-                fs.unlink(image, (err) => {
-                    if (err) {
-                        console.log(err.message); //TODO Add better logging for error handling
-                    }
-                })
             })
         })
         .catch( (err) => {
-            res.json({ message: `Error: The following error: ${err.message}`});
+            res.status(500).json({ message: `Error: The following error has occurred: ${err.message}`});
         });
 });
 

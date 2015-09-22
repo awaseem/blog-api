@@ -3,6 +3,7 @@
  */
 
 $(document).ready(function () {
+    var fileData = "";
     $("form#data").submit(function (event) {
         event.preventDefault();
         var formData = new FormData($(this)[0]);
@@ -12,15 +13,32 @@ $(document).ready(function () {
             .removeAttr('checked')
             .removeAttr('selected');
         $.ajax({
-            url: "api/image/test",
+            url: "/api/image",
             type: "POST",
-            data: formData,
-            contentType: false,
-            processData: false,
+            data: {
+                imageData: fileData,
+                name: "test",
+                description: "this is a test"
+            },
+            dataType: "json",
             success: function (returndata) {
                 console.log(returndata);
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.responseJSON);
             }
         });
         return false;
     });
+
+    $("input[type=file]").change(function(event) {
+        $.each(event.target.files, function(index, file) {
+            var reader = new FileReader();
+            reader.onload = function(event) {
+                fileData = event.target.result.match(/,(.*)$/)[1];
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+
 });
