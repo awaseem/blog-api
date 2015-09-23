@@ -81,7 +81,10 @@ router.put("/", (req, res) => {
     }
     albumModel.findById(albumId, (err, album) => {
         if (err) {
-            return res.status(500).json({ message: "Error: failed to find album"})
+            return res.status(500).json({ message: "Error: failed to find album"});
+        }
+        if (!album) {
+            return res.status(400).json({ message: "Error: could not find album with that ID"});
         }
         if (req.body.title) {
             album.title = req.body.title;
@@ -98,6 +101,19 @@ router.put("/", (req, res) => {
             }
             return res.json({ message: `Updated album: ${album._id}`, data: album});
         });
+    });
+});
+
+router.delete("/", (req, res) => {
+    let albumId = req.body.id;
+    if (!albumId) {
+        return res.status(400).json({ message: "Error: no id given for album deletion"});
+    }
+    albumModel.findByIdAndRemove(albumId, (err) => {
+        if (err) {
+            return res.status(500).json({ message: "Error: failed to delete album" });
+        }
+        return res.json({ message: `Deleted album: ${albumId}`});
     });
 });
 

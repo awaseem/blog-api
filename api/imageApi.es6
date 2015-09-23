@@ -17,7 +17,8 @@ router.get("/", (req, res) => {
     imageModel.find({
         "createdOn": {
             "$lte": dateQuery
-        }
+        },
+        "group": group
     }, null, { sort: {createdOn: -1}, limit: 9 }, (err, results) => {
         if (err) {
             return res.status(400).json({ message: "Error: could not find images" });
@@ -64,7 +65,43 @@ router.post("/", (req, res) => {
 });
 
 router.put("/", (req, res) => {
-    //TODO add put method for updating images
+    let imageId = req.body.id;
+    if (!imageId) {
+        return res.status(400).json({ message: "Error: no id given for image update"});
+    }
+    imageModel.findById(imageId, (err, image) => {
+        if (err) {
+            return res.status(500).json({ message: "Error: failed to find image"});
+        }
+        if (!image) {
+            return res.status(400).json({ message: "Error: could not find image with that id"});
+        }
+        if (req.body.name) {
+            image.title = req.body.title;
+        }
+        if (req.body.description) {
+            image.description = req.body.description;
+        }
+        image.save((err) => {
+            if (err) {
+                return res.status(500).json({ message: "Error: failed to update image" });
+            }
+            return res.json({ message: `Updated album: ${image._id}`, data: image});
+        });
+    });
+});
+
+router.delete("/", (req, res) => {
+    let imageId = req.body.id;
+    if (!imageId) {
+        return res.status(400).json({ message: "Error: no id given for image deletion"});
+    }
+    imageModel.findByIdAndRemove(imageId, (err) => {
+        if (err) {
+            return res.status(500).json({ message: "Error: failed to delete image" });
+        }
+        return res.json({ message: `Deleted image: ${imageId}`});
+    });
 });
 
 export { router };
