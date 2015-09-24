@@ -9,6 +9,7 @@ import databaseConfig from "./config/database";
 import { router as albumApi } from "./api/albumApi";
 import { router as userApi } from "./api/userApi";
 import { router as imageApi } from "./api/imageApi";
+
 let app = express();
 
 app.use(express.static(`${__dirname}/public`));
@@ -20,14 +21,22 @@ app.use(bodyparser.json({
     limit: "10mb"
 }));
 
-mongoose.connect(databaseConfig.url);
+if (process.env.MONGO) {
+    mongoose.connect(process.env.MONGO);
+}
+else {
+    mongoose.connect(databaseConfig.url);
+}
 
-app.get("/", (req, res) => {
-    res.sendFile(__dirname + "/public/html/index.html");
-});
 app.use("/api/user", userApi);
 app.use("/api/album", albumApi);
 app.use("/api/image", imageApi);
+
+if (app.get("env") === "production") {
+    app.use( (err, req, res, next) => {
+        res.status(500).json({ message: "Error: Server failed to process request!"});
+    });
+}
 
 let server = app.listen(3000, function () {
     console.log("App Running on localhost:3000");

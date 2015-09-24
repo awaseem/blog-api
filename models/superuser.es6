@@ -2,8 +2,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt-nodejs";
 
-//TODO add verification for length and other various checks
-
 let superUserSchema = mongoose.Schema({
     user: {
         username: String,

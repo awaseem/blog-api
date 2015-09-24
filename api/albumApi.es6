@@ -10,7 +10,7 @@ let router = express.Router();
 // Public routes
 
 /**
- * "/" GET allows you to get all albums in the database.
+ * "/" GET allows you to get all albums in the database ordered by date.
  * They can be filtered out by group.
  * Each query is limited to 9 results, to get more simply pass the last results date to a new get request to retrieve the next 9.
  */
@@ -35,7 +35,7 @@ router.get("/", (req, res) => {
  */
 router.get("/:id", (req, res) => {
     albumModel.findById(req.params.id, (err, results) => {
-        if (err) {
+        if (err || !results) {
             return res.status(404).json({ message: `Error: could not find album with id: ${req.params.id}`});
         }
         res.json(results);
@@ -73,6 +73,11 @@ router.post("/", (req, res) => {
 
 /**
  * "/" PUT allows you to update the album based on what parameters are presented
+ * parameters:
+ * Id (String): Id for the album to update
+ * Title (String, Optional): New title for the album
+ * Description (String, Optional): New description for the album
+ * Images (String, Optional): New array of images
  */
 router.put("/", (req, res) => {
     let albumId = req.body.id;
@@ -104,6 +109,11 @@ router.put("/", (req, res) => {
     });
 });
 
+/**
+ * "/" DELETE allows you to delete the album based on what parameters are presented
+ * parameters:
+ * Id (String): Id for the album to update
+ */
 router.delete("/", (req, res) => {
     let albumId = req.body.id;
     if (!albumId) {

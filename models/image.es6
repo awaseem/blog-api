@@ -1,8 +1,6 @@
 
 import mongoose from "mongoose";
 
-//TODO add verification for length and other various checks
-
 let image = mongoose.Schema({
     name: String,
     url: String,

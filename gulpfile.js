@@ -3,7 +3,6 @@
  */
 
 var gulp = require("gulp");
-var gutil = require("gulp-util");
 var gls = require("gulp-live-server");
 var babel = require("gulp-babel");
 
@@ -34,3 +33,5 @@ gulp.task("serve", [ "moveStatic", "babelToJS" ], function () {
         server.start.apply(server);
     });
 });
+
+gulp.task("build", [ "moveStatic", "babelToJS"]);
