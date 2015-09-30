@@ -9,9 +9,11 @@ import databaseConfig from "./config/database";
 import { router as albumApi } from "./api/albumApi";
 import { router as userApi } from "./api/userApi";
 import { router as imageApi } from "./api/imageApi";
+import { allowCrossDomain } from "./middlewares/crossDomain";
 
 let app = express();
 
+app.use(allowCrossDomain);
 app.use(express.static(`${__dirname}/public`));
 app.use(bodyparser.urlencoded({
     limit: "10mb",
@@ -33,7 +35,7 @@ app.use("/api/album", albumApi);
 app.use("/api/image", imageApi);
 
 if (app.get("env") === "production") {
-    app.use( (err, req, res, next) => {
+    app.use( (err, req, res) => {
         res.status(500).json({ message: "Error: Server failed to process request!"});
     });
 }

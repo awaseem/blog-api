@@ -1,7 +1,7 @@
-import { superuserModel } from "../models/superuser";
 import jwtConfig from "../config/jwt";
 import express from "express";
 import jwt from "jsonwebtoken";
+import { superuserModel } from "../models/superuser";
 let router = express.Router();
 
 /**

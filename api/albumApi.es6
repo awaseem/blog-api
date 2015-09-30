@@ -1,10 +1,9 @@
-
-import { albumModel } from "../models/album";
-import { superuserModel } from "../models/superuser";
-import { auth } from "../middlewares/authentication"
 import jwtConfig from "../config/jwt";
 import express from "express";
 import jwt from "jsonwebtoken";
+import { albumModel } from "../models/album";
+import { superuserModel } from "../models/superuser";
+import { auth } from "../middlewares/authentication";
 let router = express.Router();
 
 // Public routes
