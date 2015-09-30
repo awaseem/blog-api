@@ -1,5 +1,5 @@
-# Brandon-photography
+# Picture Storage API
 
-A photography website created for a close friend
+A API that interacts with imgur for uploading and storing images for personal side projects 
 
 Still Developing.... 
