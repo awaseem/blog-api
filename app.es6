@@ -40,6 +40,6 @@ if (app.get("env") === "production") {
     });
 }
 
-let server = app.listen(3000, function () {
-    console.log("App Running on localhost:3000");
+let server = app.listen(8000, function () {
+    console.log("App Running on localhost:8000");
 });
