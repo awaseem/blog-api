@@ -11,6 +11,33 @@ imgur.setClientId(imgurConfig.clientId);
 
 // Public routes
 
+let saveImageModel = (req, res) => {
+    let newImageObj = new imageModel();
+
+    newImageObj.name = req.body.name;
+    newImageObj.description = req.body.description;
+    if (req.body.imageUrl) {
+        newImageObj.url = req.body.imageUrl;
+    }
+    else if (req.body.imgurData) {
+        newImageObj.url = req.body.imgurData.data.link;
+        newImageObj.imgurData = JSON.stringify(req.body.imgurData);
+    }
+    newImageObj.group = req.user.group;
+
+    newImageObj.save( (err) => {
+        if (err) {
+            res.status(500).json({
+                message: `Error: failed to save image to database, sending the image url`,
+                data: imageUrl
+            });
+        }
+        else {
+            res.json({ message: "Added image to database", data: newImageObj});
+        }
+    });
+};
+
 /**
  * "/" GET allows you to get all images in the database ordered by date.
  * They can be filtered out by group.
@@ -50,44 +77,36 @@ router.use(auth);
 
 /**
  * "/" POST allows you to add a new image.
+ * If both an imageUrl or data is given then the URL is given priority.
  * parameters:
  * name (String): name of image
  * description (String): short summary about the image
+ * imageUrl (String): a url to add to the database
  * imagesData (String): base64 encoded image
  */
 router.post("/", (req, res) => {
     // Post request validation
-    if ( !req.body.name || !req.body.description || !req.body.imageData ) {
+    if ( !req.body.name || !req.body.description || !(req.body.imageData || req.body.imageUrl) ) {
         return res.status(400).json({ message: "Error: missing parameters that are required to upload images"})
     }
 
-    let image = req.body.imageData;
-    // Uplaod images
-    imgur.uploadBase64(image)
-        .then( (json) => {
-            let newImageObj = new imageModel();
+    let image64 = req.body.imageData;
+    let imageUrl = req.body.imageUrl;
 
-            newImageObj.name = req.body.name;
-            newImageObj.description = req.body.description;
-            newImageObj.url = json.data.link;
-            newImageObj.imgurData = JSON.stringify(json);
-            newImageObj.group = req.user.group;
-
-            newImageObj.save( (err) => {
-                if (err) {
-                    res.status(500).json({
-                        message: `Error: failed to save image to database, sending the image url`,
-                        data: json.data.link
-                    });
-                }
-                else {
-                    res.json({ message: "Added image to database", data: newImageObj});
-                }
+    if (imageUrl) {
+        saveImageModel(req, res);
+    }
+    else if (image64) {
+        // Uplaod images
+        imgur.uploadBase64(image64)
+            .then( (json) => {
+                req.body.imgurData = json;
+                saveImageModel(req, res);
             })
-        })
-        .catch( (err) => {
-            res.status(500).json({ message: `Error: The following error has occurred: ${err.message}`});
-        });
+            .catch( (err) => {
+                res.status(500).json({ message: `Error: The following error has occurred: ${err.message}`});
+            });
+    }
 });
 
 /**
