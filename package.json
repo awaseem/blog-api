@@ -23,5 +23,5 @@
     "gulp-livereload": "^3.8.0",
     "gulp-nodemon": "^2.0.3",
     "gulp-util": "^3.0.6"
-  }
+    }
 }

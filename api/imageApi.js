@@ -45,6 +45,7 @@ let saveImageModel = (req, res) => {
  */
 router.get("/", (req, res) => {
     let dateQuery = req.query.date ? new Date(req.query.date) : new Date();
+    console.log(dateQuery);
     let group = req.query.group;
     imageModel.find({
         "createdOn": {
