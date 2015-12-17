@@ -38,7 +38,7 @@ router.post("/signin", (req, res) => {
                 return res.json({ message: "Enjoy the token!", token: accessToken });
             }
         }
-    })
+    });
 });
 
 /**
@@ -76,7 +76,7 @@ router.post("/signup", (req, res) => {
                 else {
                     return res.json({ message: "Added user to database!" });
                 }
-            })
+            });
         });
     }
     else {
@@ -96,7 +96,7 @@ router.post("/checkToken", (req, res) => {
             if (err) {
                 return res.status(500).json(err);
             }
-            return res.json({ message: "Token is good to go!"})
+            return res.json({ message: "Token is good to go!"});
         });
     }
     else {

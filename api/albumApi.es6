@@ -81,7 +81,7 @@ router.post("/", (req, res) => {
 router.put("/", (req, res) => {
     let albumId = req.body.id;
     if ( !albumId ) {
-        return res.status(400).json({ message: "Error: no id given for album update"})
+        return res.status(400).json({ message: "Error: no id given for album update"});
     }
     albumModel.findById(albumId, (err, album) => {
         if (err) {

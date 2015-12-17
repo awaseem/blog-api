@@ -87,7 +87,7 @@ router.use(auth);
 router.post("/", (req, res) => {
     // Post request validation
     if ( !req.body.name || !req.body.description ) {
-        return res.status(400).json({ message: "Error: missing parameters that are required to upload images"})
+        return res.status(400).json({ message: "Error: missing parameters that are required to upload images"});
     }
     let image64;
     let imageUrl;
