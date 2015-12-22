@@ -37,6 +37,11 @@ app.use("/api/user", userApi);
 app.use("/api/album", albumApi);
 app.use("/api/image", imageApi);
 
+// Catch any other routes and send a 404
+app.all("*", (req, res) => {
+    res.status(404).json( { message: "Error: Route does not exist!"} );
+});
+
 // Setup production stuff here if you'd like otherwise do dev stuff here
 if (app.get("env") === "production") {
     app.use( (err, req, res) => {
