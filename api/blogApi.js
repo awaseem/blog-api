@@ -1,9 +1,11 @@
 import jwtConfig from "../config/jwt";
 import express from "express";
 import jwt from "jsonwebtoken";
+import commonRoute from "../common/commonRoutes";
 import { blogModel } from "../models/blog";
 import { superuserModel } from "../models/superuser";
 import { auth } from "../middlewares/authentication";
+
 let router = express.Router();
 
 // Public routes
@@ -13,21 +15,7 @@ let router = express.Router();
  * They can be filtered out by group.
  * Each query is limited to 9 results, to get more simply pass the last results date to a new get request to retrieve the next 9.
  */
-router.get("/", (req, res) => {
-    let dateQuery = req.query.date ? new Date(req.query.date) : new Date();
-    let group = req.query.group;
-    blogModel.find({
-        "group": group,
-        "createdOn": {
-            "$lte": dateQuery
-        }
-    }, null, { sort: {createdOn: -1}, limit: 9 }, (err, results) => {
-        if (err) {
-            return res.status(400).json({ message: "Error: could not find blogs"});
-        }
-        res.json(results);
-    });
-});
+router.get("/", (req, res, next) => commonRoute.GET(req, res, next, blogModel));
 
 // Private Api
 
@@ -96,17 +84,6 @@ router.put("/", (req, res) => {
  * parameters:
  * Id (String): Id for the blog to delete
  */
-router.delete("/", (req, res) => {
-    let blogId = req.body.id;
-    if (!blogId) {
-        return res.status(400).json({ message: "Error: no id given for blog deletion"});
-    }
-    blogModel.findByIdAndRemove(blogId, (err) => {
-        if (err) {
-            return res.status(500).json({ message: "Error: failed to delete blog" });
-        }
-        return res.json({ message: `Deleted blog: ${blogId}`});
-    });
-});
+router.delete("/", (req, res, next) => commonRoute.DELETE(req, res, next, blogModel));
 
 export { router };

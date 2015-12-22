@@ -5,11 +5,10 @@ import path from "path";
 import imgurConfig from "../config/imgur";
 import { imageModel } from "../models/image";
 import { auth } from "../middlewares/authentication";
+import commonRoute from "../common/commonRoutes";
 let router = express.Router();
 
 imgur.setClientId(imgurConfig.clientId);
-
-// Public routes
 
 let saveImageModel = (req, res) => {
     let newImageObj = new imageModel();
@@ -38,38 +37,14 @@ let saveImageModel = (req, res) => {
     });
 };
 
+// Public routes
+
 /**
  * "/" GET allows you to get all images in the database ordered by date.
  * They can be filtered out by group.
  * Each query is limited to 9 results, to get more simply pass the last results date to a new get request to retrieve the next 9.
  */
-router.get("/", (req, res, next) => {
-    let dateQuery = req.query.date ? new Date(req.query.date) : new Date();
-    let group = req.query.group;
-    imageModel.find({
-        "createdOn": {
-            "$lte": dateQuery
-        },
-        "group": group
-    }, null, { sort: {createdOn: -1}, limit: 9 }, (err, results) => {
-        if (err) {
-            return res.status(500).json({ message: "Error: failed to find images" });
-        }
-        res.json(results);
-    });
-});
-
-/**
- * "/:id" GET allows you to retrieve one image item based on the database id
- */
-router.get("/:id", (req, res) => {
-    imageModel.findById(req.params.id, (err, results) => {
-        if (err || !results) {
-            return res.status(404).json({ message: `Error: could not find image with id: ${req.params.id}`});
-        }
-        res.json(results);
-    });
-});
+router.get("/", (req, res, next) => commonRoute.GET(req, res, next, imageModel));
 
 // private Api
 
@@ -156,17 +131,6 @@ router.put("/", (req, res) => {
  * parameters:
  * Id (String): Id for the image to update
  */
-router.delete("/", (req, res) => {
-    let imageId = req.body.id;
-    if (!imageId) {
-        return res.status(400).json({ message: "Error: no id given for image deletion"});
-    }
-    imageModel.findByIdAndRemove(imageId, (err) => {
-        if (err) {
-            return res.status(500).json({ message: "Error: failed to delete image" });
-        }
-        return res.json({ message: `Deleted image: ${imageId}`});
-    });
-});
+router.delete("/", (req, res) => commonRoute.DELETE(req, res, next, imageModel));
 
 export { router };
