@@ -32,9 +32,8 @@ router.post("/signin", (req, res) => {
             }
             else {
                 let accessToken = jwt.sign( { userId: user._id, group: user.group.name }, jwtConfig.secret, {
-                    expiresInMinutes: jwtConfig.tokenExp
+                    expiresIn: jwtConfig.tokenExp
                 });
-
                 return res.json({ message: "Enjoy the token!", token: accessToken });
             }
         }
@@ -64,6 +63,7 @@ router.post("/signup", (req, res) => {
                 return res.status(400).json({ message: "Error: group or group description not given"});
             }
             let newSuperUser = new superuserModel();
+            
             newSuperUser.user.username = req.body.username;
             newSuperUser.user.password = newSuperUser.generateHash(req.body.password);
             newSuperUser.group.name = req.body.groupName;

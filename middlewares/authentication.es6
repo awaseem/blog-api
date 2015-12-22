@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import jwtConfig from "../config/jwt"
+import jwtConfig from "../config/jwt";
 
 let auth = (req, res, next) => {
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
@@ -15,7 +15,7 @@ let auth = (req, res, next) => {
         });
     }
     else {
-        return res.status(403).json({ message: "Yo buddy guy you need a token!!!"});
+        return res.status(403).json({ message: "You need a token to access this route!"});
     }
 };
 
