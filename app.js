@@ -5,7 +5,9 @@
 import express from "express";
 import mongoose from "mongoose";
 import bodyparser from "body-parser";
+import morgan from "morgan";
 import databaseConfig from "./config/database";
+import expressConfig from "./config/express";
 import { router as albumApi } from "./api/albumApi";
 import { router as userApi } from "./api/userApi";
 import { router as imageApi } from "./api/imageApi";
@@ -16,11 +18,11 @@ let app = express();
 app.use(allowCrossDomain);
 app.use(express.static(`${__dirname}/public`));
 app.use(bodyparser.urlencoded({
-    limit: "10mb",
-    extended: true
+    limit: expressConfig.bodyparserSizeLimit,
+    extended: expressConfig.extended
 }));
 app.use(bodyparser.json({
-    limit: "10mb"
+    limit: expressConfig.bodyparserSizeLimit
 }));
 
 if (process.env.MONGO) {
@@ -30,16 +32,21 @@ else {
     mongoose.connect(databaseConfig.url);
 }
 
+// Setup all of our API routes
 app.use("/api/user", userApi);
 app.use("/api/album", albumApi);
 app.use("/api/image", imageApi);
 
+// Setup production stuff here if you'd like otherwise do dev stuff here
 if (app.get("env") === "production") {
     app.use( (err, req, res) => {
         res.status(500).json({ message: "Error: Server failed to process request!"});
     });
 }
+else {
+    app.use(morgan("combined"));
+}
 
-let server = app.listen(8000, function () {
-    console.log("App Running on http://localhost:8000");
+let server = app.listen(expressConfig.port, function () {
+    console.log(`App Running on http://localhost:${expressConfig.port}`);
 });

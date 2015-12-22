@@ -43,9 +43,8 @@ let saveImageModel = (req, res) => {
  * They can be filtered out by group.
  * Each query is limited to 9 results, to get more simply pass the last results date to a new get request to retrieve the next 9.
  */
-router.get("/", (req, res) => {
+router.get("/", (req, res, next) => {
     let dateQuery = req.query.date ? new Date(req.query.date) : new Date();
-    console.log(dateQuery);
     let group = req.query.group;
     imageModel.find({
         "createdOn": {
