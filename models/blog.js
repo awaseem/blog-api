@@ -2,8 +2,9 @@ import mongoose from "mongoose";
 
 let blog = new mongoose.Schema({
     heading: String,
-    description: String,
+    createdOn: Date,
     body: String,
+    author: String,
     group: String
 });
 
@@ -15,6 +16,6 @@ blog.pre("save", function (next) {
     next();
 });
 
-let blogModel = mongoose.model("blog", album);
+let blogModel = mongoose.model("blog", blog);
 
 export { blogModel };

@@ -5,7 +5,9 @@ import bcrypt from "bcrypt-nodejs";
 let superUserSchema = mongoose.Schema({
     user: {
         username: String,
-        password: String
+        password: String,
+        firstname: String,
+        lastname: String
     },
     group: {
         name: String,

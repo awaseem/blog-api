@@ -8,7 +8,7 @@ import bodyparser from "body-parser";
 import morgan from "morgan";
 import databaseConfig from "./config/database";
 import expressConfig from "./config/express";
-import { router as albumApi } from "./api/albumApi";
+import { router as blogApi } from "./api/blogApi";
 import { router as userApi } from "./api/userApi";
 import { router as imageApi } from "./api/imageApi";
 import { allowCrossDomain } from "./middlewares/crossDomain";
@@ -34,7 +34,7 @@ else {
 
 // Setup all of our API routes
 app.use("/api/user", userApi);
-app.use("/api/album", albumApi);
+app.use("/api/blog", blogApi);
 app.use("/api/image", imageApi);
 
 // Catch any other routes and send a 404

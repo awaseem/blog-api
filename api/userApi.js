@@ -31,7 +31,7 @@ router.post("/signin", (req, res) => {
                 return res.status(400).json({ message: "Auth Failed: wrong password"});
             }
             else {
-                let accessToken = jwt.sign( { userId: user._id, group: user.group.name }, jwtConfig.secret, {
+                let accessToken = jwt.sign( { userId: user._id, group: user.group.name, firstname: user.user.firstname, lastname: user.user.lastname }, jwtConfig.secret, {
                     expiresIn: jwtConfig.tokenExp
                 });
                 return res.json({ message: "Enjoy the token!", token: accessToken });
@@ -49,7 +49,7 @@ router.post("/signin", (req, res) => {
  * groupDescription (String): summary of group
  */
 router.post("/signup", (req, res) => {
-    if (req.body.username && req.body.password && req.body.groupName && req.body.groupDescription) {
+    if (req.body.username && req.body.password && req.body.groupName && req.body.firstname && req.body.lastname) {
         superuserModel.findOne({
             "user.username": req.body.username
         }, (err, user) => {
@@ -63,9 +63,11 @@ router.post("/signup", (req, res) => {
                 return res.status(400).json({ message: "Error: group or group description not given"});
             }
             let newSuperUser = new superuserModel();
-            
+
             newSuperUser.user.username = req.body.username;
             newSuperUser.user.password = newSuperUser.generateHash(req.body.password);
+            newSuperUser.user.firstname = req.body.firstname;
+            newSuperUser.user.lastname = req.body.lastname;
             newSuperUser.group.name = req.body.groupName;
             newSuperUser.group.description = req.body.groupDescription;
 
