@@ -32,4 +32,5 @@ database.es6
 jwt.es6
 imgur.es6
 playbox
+config
 .DS_Store
