@@ -9,7 +9,7 @@ export default {
             }
         }, null, { sort: {createdOn: -1}, limit: 9 }, (err, results) => {
             if (err) {
-                return res.status(400).json({ message: "Error: could not find blogs"});
+                return res.status(400).json({ message: "Error: could not find items requested"});
             }
             res.json(results);
         });

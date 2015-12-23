@@ -2,6 +2,7 @@ import jwtConfig from "../config/jwt";
 import express from "express";
 import jwt from "jsonwebtoken";
 import commonRoute from "../common/commonRoutes";
+import message from "../messages/blogApiMessages";
 import { blogModel } from "../models/blog";
 import { superuserModel } from "../models/superuser";
 import { auth } from "../middlewares/authentication";
@@ -29,7 +30,7 @@ router.use(auth);
  */
 router.post("/", (req, res) => {
     if ( !req.body.heading || !req.body.body ) {
-        return res.status(400).json({ message: "Error: invalid parameters"});
+        return res.status(400).json({ message: message.invalidParameters });
     }
     let newblog = new blogModel();
     newblog.heading = req.body.heading;
@@ -39,9 +40,9 @@ router.post("/", (req, res) => {
 
     newblog.save((err) => {
         if (err) {
-            return res.status(500).json({ message: "Error: could not add blog data to server"});
+            return res.status(500).json({ message: message.serverErrorAdd });
         }
-        res.json( { message: "Added blog", data: newblog});
+        res.json( { message: message.addedBlog, data: newblog});
     });
 });
 
@@ -55,14 +56,14 @@ router.post("/", (req, res) => {
 router.put("/", (req, res) => {
     let blogId = req.body.id;
     if ( !blogId ) {
-        return res.status(400).json({ message: "Error: no id given for blog update"});
+        return res.status(400).json({ message: message.noIdForUpdate });
     }
     blogModel.findById(blogId, (err, blog) => {
         if (err) {
-            return res.status(500).json({ message: "Error: failed to find blog"});
+            return res.status(500).json({ message: message.serverFailedFindBlog });
         }
         if (!blog) {
-            return res.status(400).json({ message: "Error: could not find blog with that ID"});
+            return res.status(400).json({ message: message.noBlogForId });
         }
         if (req.body.heading) {
             blog.heading = req.body.heading;
@@ -72,7 +73,7 @@ router.put("/", (req, res) => {
         }
         blog.save((err) => {
             if (err) {
-                return res.status(500).json({ message: "Error: failed to update blog" });
+                return res.status(500).json({ message: message.failedToUpdate });
             }
             return res.json({ message: `Updated blog: ${blog._id}`, data: blog});
         });

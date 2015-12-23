@@ -1,10 +1,5 @@
-// import request from "supertest";
-// import app from "../app.js";
-//
-// describe("Test Blog Api routes", function () {
-//     it("this is just a test", function (done) {
-//         request(app)
-//         .get("/api/blog")
-//         .expect(200, done);
-//     });
-// });
+import request from "supertest";
+import mongoose from "mongoose";
+import { blogModel } from "../models/blog";
+import message from "../messages/userApiMessages";
+import app from "../app.js";
