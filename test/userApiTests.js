@@ -8,6 +8,8 @@ let SIGN_UP_API_ROUTE = "/api/user/signup";
 
 let REMOVE_USER_API_ROUTE = "/api/user/removeUser";
 
+let SIGN_IN_API_ROUTE = "/api/user/signin";
+
 let clearDB = function() {
     for (var i in mongoose.connection.collections) {
         mongoose.connection.collections[i].remove(function() {});
@@ -167,51 +169,81 @@ describe("Test User Api for Remove", () => {
         .expect(200, { message: message.deletedUsername}, done);
     });
 });
-//
-// let SIGN_IN_API_ROUTE = "/api/user/signin";
-//
-// describe("Test User Api For Sign In", () => {
-//
-//     it("should fail if the post message body is empty", (done) => {
-//         request(app)
-//         .post(SIGN_IN_API_ROUTE)
-//         .expect(400, { message: message.invalidParameters }, done);
-//     });
-//
-//     it("should fail if the post message only has a username", (done) => {
-//         request(app)
-//         .post(SIGN_IN_API_ROUTE)
-//         .send({ username: "test" })
-//         .expect(400, { message: message.noPasswordGiven }, done);
-//     });
-//
-//     it("should fail if the username is correct, but the passsword is incorrect", (done) => {
-//         request(app)
-//         .post(SIGN_IN_API_ROUTE)
-//         .send({
-//             username: "test",
-//             password: "test_not_right"
-//         })
-//         .expect(400, { message: message.authFailedPassword }, done);
-//     });
-//
-//     it("should fail if the username is incorrect, but the password is corrent", (done) => {
-//         request(app)
-//         .post(SIGN_IN_API_ROUTE)
-//         .send({
-//             username: "test_not_right",
-//             password: "test"
-//         })
-//         .expect(400, { message: message.authFailedUsername }, done);
-//     });
-//
-//     it("should work with correct username and password", (done) => {
-//         request(app)
-//         .post(SIGN_IN_API_ROUTE)
-//         .send({
-//             username: "test",
-//             password: "test"
-//         })
-//         .expect(200, done);
-//     });
-// });
+
+describe("Test User Api For Sign In", () => {
+
+    before(function (done) {
+        if (mongoose.connection.readyState === 0) {
+            mongoose.connect(process.env.MONGO);
+            let testSuperUser = new superuserModel();
+
+            testSuperUser.user.username = "test";
+            testSuperUser.user.password = testSuperUser.generateHash("test");
+            testSuperUser.user.firstname = "test";
+            testSuperUser.user.lastname = "test";
+            testSuperUser.group.name = "test";
+            testSuperUser.group.description = "test";
+
+            testSuperUser.save((err) => {
+                if (err) {
+                    return done(err);
+                }
+                else {
+                    return done();
+                }
+            });
+        } else {
+            clearDB();
+            return done();
+        }
+    });
+
+    after(function (done) {
+        clearDB();
+        mongoose.disconnect();
+        return done();
+    });
+
+    it("should fail if the post message body is empty", (done) => {
+        request(app)
+        .post(SIGN_IN_API_ROUTE)
+        .expect(400, { message: message.invalidParameters }, done);
+    });
+
+    it("should fail if the post message only has a username", (done) => {
+        request(app)
+        .post(SIGN_IN_API_ROUTE)
+        .send({ username: "test" })
+        .expect(400, { message: message.noPasswordGiven }, done);
+    });
+
+    it("should fail if the username is correct, but the passsword is incorrect", (done) => {
+        request(app)
+        .post(SIGN_IN_API_ROUTE)
+        .send({
+            username: "test",
+            password: "test_not_right"
+        })
+        .expect(400, { message: message.authFailedPassword }, done);
+    });
+
+    it("should fail if the username is incorrect, but the password is corrent", (done) => {
+        request(app)
+        .post(SIGN_IN_API_ROUTE)
+        .send({
+            username: "test_not_right",
+            password: "test"
+        })
+        .expect(400, { message: message.authFailedUsername }, done);
+    });
+
+    it("should work with correct username and password", (done) => {
+        request(app)
+        .post(SIGN_IN_API_ROUTE)
+        .send({
+            username: "test",
+            password: "test"
+        })
+        .expect(200, done);
+    });
+});
