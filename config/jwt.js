@@ -1,4 +1,4 @@
 export default {
-    secret: "wuefir7hrwt37tg4398rh4373gtwrhnhfeog",
+    secret: "SECRET_JWT",
     tokenExp: "24h"
 };
