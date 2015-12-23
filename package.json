@@ -4,7 +4,7 @@
   "description": "Personal website for brandon tam",
   "main": "app.js",
   "scripts": {
-    "test": "MONGO=mongodb://test:test@ds035485.mongolab.com:35485/tester ./node_modules/mocha/bin/mocha --compilers js:babel-register --timeout 15000",
+    "test": "./node_modules/mocha/bin/mocha --compilers js:babel-register --timeout 15000",
     "dev": "nodemon app.js --exec babel-node --presets es2015",
     "start": "node test.js"
   },
