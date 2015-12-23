@@ -1,6 +1,7 @@
 import jwtConfig from "../config/jwt";
 import express from "express";
 import jwt from "jsonwebtoken";
+import message from "../messages/userApiMessages";
 import { superuserModel } from "../models/superuser";
 let router = express.Router();
 
@@ -12,29 +13,65 @@ let router = express.Router();
  */
 router.post("/signin", (req, res) => {
     if (!req.body.username) {
-        return res.status(400).json({ message: "Error: No user given!"});
+        return res.status(400).json({ message: message.invalidParameters });
     }
     if (!req.body.password) {
-        return res.status(400).json({ message: "Error: no password given!"});
+        return res.status(400).json({ message: message.noPasswordGiven });
     }
     superuserModel.findOne({
         "user.username": req.body.username
     }, (err, user) => {
         if (err) {
-            return res.status(500).json({ message: "Error occurred while finding user"});
+            return res.status(500).json({ message: message.databaseLookUpError });
         }
         if (!user) {
-            return res.status(400).json({ message: "Auth Failed: could not find user"});
+            return res.status(400).json({ message: message.authFailedUsername });
         }
         else if (user) {
             if (!user.validPassword(req.body.password)) {
-                return res.status(400).json({ message: "Auth Failed: wrong password"});
+                return res.status(400).json({ message: message.authFailedPassword });
             }
             else {
                 let accessToken = jwt.sign( { userId: user._id, group: user.group.name, firstname: user.user.firstname, lastname: user.user.lastname }, jwtConfig.secret, {
                     expiresIn: jwtConfig.tokenExp
                 });
-                return res.json({ message: "Enjoy the token!", token: accessToken });
+                return res.json({ message: message.enjoyToken, token: accessToken });
+            }
+        }
+    });
+});
+
+router.post("/removeUser", (req, res, next) => {
+    if (!req.body.username) {
+        return res.status(400).json({ message: message.invalidParameters });
+    }
+    if (!req.body.password) {
+        return res.status(400).json({ message: message.noPasswordGiven });
+    }
+    superuserModel.findOne({
+        "user.username": req.body.username
+    }, (err, user) => {
+        if (err) {
+            return res.status(500).json({ message: message.databaseLookUpError });
+        }
+        if (!user) {
+            return res.status(400).json({ message: message.authFailedUsername });
+        }
+        else if (user) {
+            if (!user.validPassword(req.body.password)) {
+                return res.status(400).json({ message: message.authFailedPassword });
+            }
+            else {
+                superuserModel.findOneAndRemove({
+                    "user.username": req.body.username
+                }, (err) => {
+                    if (err) {
+                        return res.status(500).json({ message: message.databaseLookUpError });
+                    }
+                    else {
+                        return res.json({ message: message.deletedUsername });
+                    }
+                });
             }
         }
     });
@@ -54,13 +91,13 @@ router.post("/signup", (req, res) => {
             "user.username": req.body.username
         }, (err, user) => {
             if (err) {
-                return res.status(500).json({ message: "Error: server barfed when trying to check username duplicates"});
+                return res.status(500).json({ message: message.usernameDuplicateCheckFailed });
             }
             if (user) {
-                return res.status(400).json({ message: "Error: username already exists!"});
+                return res.status(400).json({ message: message.usernameAlreadyExists });
             }
-            if (!req.body.groupName || !req.body.groupDescription) {
-                return res.status(400).json({ message: "Error: group or group description not given"});
+            if (!req.body.groupName) {
+                return res.status(400).json({ message: message.groupNameNotGiven });
             }
             let newSuperUser = new superuserModel();
 
@@ -73,16 +110,16 @@ router.post("/signup", (req, res) => {
 
             newSuperUser.save((err) => {
                 if (err) {
-                    return res.status(500).json({ message: "Error: failed to add user!"});
+                    return res.status(500).json({ message: message.serverFailedToAddUser });
                 }
                 else {
-                    return res.json({ message: "Added user to database!" });
+                    return res.json({ message: message.addedUserToDatabase });
                 }
             });
         });
     }
     else {
-        return res.status(400).json({ message: "Error: you're missing parameters that are required to sign up"});
+        return res.status(400).json({ message: message.properParamsNotGiven });
     }
 });
 
@@ -98,11 +135,11 @@ router.post("/checkToken", (req, res) => {
             if (err) {
                 return res.status(500).json(err);
             }
-            return res.json({ message: "Token is good to go!"});
+            return res.json({ message: message.tokenIsProper });
         });
     }
     else {
-        return res.status(403).json({ message: "Yo buddy guy you need a token!!!"});
+        return res.status(403).json({ message: message.tokenIsNotProper });
     }
 });
 

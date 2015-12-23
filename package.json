@@ -4,12 +4,12 @@
   "description": "Personal website for brandon tam",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "MONGO=mongodb://test:test@ds035485.mongolab.com:35485/tester mocha --compilers js:babel-register --timeout 15000",
     "dev": "nodemon app.js --exec babel-node --presets es2015",
     "start": "node test.js"
   },
   "author": "Ali Waseem",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.13.3",
@@ -25,6 +25,7 @@
     "gulp-live-server": "0.0.24",
     "gulp-livereload": "^3.8.0",
     "gulp-nodemon": "^2.0.3",
-    "gulp-util": "^3.0.6"
+    "gulp-util": "^3.0.6",
+    "supertest": "^1.1.0"
   }
 }

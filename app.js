@@ -55,3 +55,5 @@ else {
 let server = app.listen(expressConfig.port, function () {
     console.log(`App Running on http://localhost:${expressConfig.port}`);
 });
+
+export default app;
