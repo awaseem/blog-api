@@ -25,11 +25,12 @@ app.use(bodyparser.json({
     limit: expressConfig.bodyparserSizeLimit
 }));
 
-if (process.env.MONGO) {
-    mongoose.connect(process.env.MONGO);
+
+if (process.env.TEST) {
+    mongoose.connect(databaseConfig.testing ? databaseConfig.testing : "mongodb://127.0.0.1");
 }
-else if (process.env.TEST) {
-    mongoose.connect("mongodb://127.0.0.1");
+else if (process.env.MONGO) {
+    mongoose.connect(process.env.MONGO);
 }
 else {
     mongoose.connect(databaseConfig.url);

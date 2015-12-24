@@ -4,8 +4,9 @@
   "description": "Personal website for brandon tam",
   "main": "app.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --compilers js:babel-register --timeout 15000",
-    "dev": "nodemon app.js --exec babel-node --presets es2015",
+    "postinstall": "./node_modules/babel-cli/bin/babel-node.js generateConfigs.js",
+    "test": "TEST=true ./node_modules/mocha/bin/mocha --compilers js:babel-register --timeout 15000",
+    "dev": "./node_modules/nodemon/bin/nodemon.js app.js --exec ./node_modules/babel-cli/bin/babel-node.js --presets es2015",
     "start": "node test.js"
   },
   "author": "Ali Waseem",
@@ -22,6 +23,7 @@
     "morgan": "^1.6.1"
   },
   "devDependencies": {
+    "babel-cli": "^6.3.17",
     "gulp": "^3.9.0",
     "gulp-babel": "^5.2.1",
     "gulp-live-server": "0.0.24",
@@ -29,6 +31,7 @@
     "gulp-nodemon": "^2.0.3",
     "gulp-util": "^3.0.6",
     "mocha": "^2.3.4",
+    "nodemon": "^1.8.1",
     "supertest": "^1.1.0"
   }
 }

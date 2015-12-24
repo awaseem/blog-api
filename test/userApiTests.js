@@ -1,5 +1,6 @@
 import request from "supertest";
 import mongoose from "mongoose";
+import database from "../config/database";
 import { superuserModel } from "../models/superuser";
 import message from "../messages/userApiMessages";
 import app from "../app.js";
@@ -20,7 +21,7 @@ describe("Test User Api for Sign Up", () => {
 
     before(function (done) {
         if (mongoose.connection.readyState === 0) {
-            mongoose.connect(process.env.TEST ? "mongodb://127.0.0.1" : database.testing, function (err) {
+            mongoose.connect(database.testing ? database.testing : "mongodb://127.0.0.1", function (err) {
                 if (err) {
                     throw err;
                 }
@@ -106,7 +107,7 @@ describe("Test User Api for Remove", () => {
 
     before(function (done) {
         if (mongoose.connection.readyState === 0) {
-            mongoose.connect(process.env.TEST ? "mongodb://127.0.0.1" : database.testing);
+            mongoose.connect(database.testing ? database.testing : "mongodb://127.0.0.1");
             let testSuperUser = new superuserModel();
 
             testSuperUser.user.username = "test";
@@ -174,7 +175,7 @@ describe("Test User Api For Sign In", () => {
 
     before(function (done) {
         if (mongoose.connection.readyState === 0) {
-            mongoose.connect(process.env.TEST ? "mongodb://127.0.0.1" : database.testing);
+            mongoose.connect(database.testing ? database.testing : "mongodb://127.0.0.1");
             let testSuperUser = new superuserModel();
 
             testSuperUser.user.username = "test";
