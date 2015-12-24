@@ -28,6 +28,9 @@ app.use(bodyparser.json({
 if (process.env.MONGO) {
     mongoose.connect(process.env.MONGO);
 }
+else if (process.env.TEST) {
+    mongoose.connect("mongodb://127.0.0.1");
+}
 else {
     mongoose.connect(databaseConfig.url);
 }
