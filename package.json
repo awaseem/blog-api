@@ -1,7 +1,7 @@
 {
-  "name": "brandom-tam-website",
+  "name": "Blog API",
   "version": "1.0.0",
-  "description": "Personal website for brandon tam",
+  "description": "A simple RESTful API for a generic blog website",
   "main": "app.js",
   "scripts": {
     "postinstall": "./node_modules/babel-cli/bin/babel-node.js generateConfigs.js",
@@ -24,12 +24,6 @@
   },
   "devDependencies": {
     "babel-cli": "^6.3.17",
-    "gulp": "^3.9.0",
-    "gulp-babel": "^5.2.1",
-    "gulp-live-server": "0.0.24",
-    "gulp-livereload": "^3.8.0",
-    "gulp-nodemon": "^2.0.3",
-    "gulp-util": "^3.0.6",
     "mocha": "^2.3.4",
     "nodemon": "^1.8.1",
     "supertest": "^1.1.0"
