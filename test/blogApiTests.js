@@ -1,6 +1,6 @@
 import request from "supertest";
 import mongoose from "mongoose";
-import database from "../config/database";
+import config from "nconf";
 import { blogModel } from "../models/blog";
 import { superuserModel } from "../models/superuser";
 import message from "../messages/blogApiMessages";
@@ -22,7 +22,7 @@ describe("Test Blog Api", () => {
 
     before(function(done) {
         if (mongoose.connection.readyState === 0) {
-            mongoose.connect(database.testing ? database.testing : "mongodb://127.0.0.1");
+            mongoose.connect(config.get("testingDatabase"));
         }
         let testSuperUser = new superuserModel();
 

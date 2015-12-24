@@ -2,13 +2,13 @@
 import express from "express";
 import imgur from "imgur";
 import path from "path";
-import imgurConfig from "../config/imgur";
+import config from "nconf";
 import { imageModel } from "../models/image";
 import { auth } from "../middlewares/authentication";
 import commonRoute from "../common/commonRoutes";
 let router = express.Router();
 
-imgur.setClientId(imgurConfig.clientId);
+imgur.setClientId(config.get("imgurClientId"));
 
 let saveImageModel = (req, res) => {
     let newImageObj = new imageModel();

@@ -1,4 +1,4 @@
-import jwtConfig from "../config/jwt";
+import config from "nconf";
 import express from "express";
 import jwt from "jsonwebtoken";
 import message from "../messages/userApiMessages";
@@ -32,8 +32,8 @@ router.post("/signin", (req, res) => {
                 return res.status(400).json({ message: message.authFailedPassword });
             }
             else {
-                let accessToken = jwt.sign( { userId: user._id, group: user.group.name, firstname: user.user.firstname, lastname: user.user.lastname }, jwtConfig.secret, {
-                    expiresIn: jwtConfig.tokenExp
+                let accessToken = jwt.sign( { userId: user._id, group: user.group.name, firstname: user.user.firstname, lastname: user.user.lastname }, config.get("tokenSecret"), {
+                    expiresIn: config.get("tokenExp")
                 });
                 return res.json({ message: message.enjoyToken, token: accessToken });
             }
@@ -131,7 +131,7 @@ router.post("/signup", (req, res) => {
 router.post("/checkToken", (req, res) => {
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
     if (token) {
-        jwt.verify(token, jwtConfig.secret, (err) => {
+        jwt.verify(token, config.get("tokenSecret"), (err) => {
             if (err) {
                 return res.status(500).json(err);
             }

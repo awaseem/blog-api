@@ -1,6 +1,4 @@
-import jwtConfig from "../config/jwt";
 import express from "express";
-import jwt from "jsonwebtoken";
 import commonRoute from "../common/commonRoutes";
 import message from "../messages/blogApiMessages";
 import { blogModel } from "../models/blog";

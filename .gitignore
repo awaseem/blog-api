@@ -35,4 +35,5 @@ playbox
 database.js
 imgur.js
 jwt.js
+config.json
 .DS_Store
