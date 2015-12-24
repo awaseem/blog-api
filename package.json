@@ -1,5 +1,5 @@
 {
-  "name": "Blog API",
+  "name": "Blog-API",
   "version": "1.0.0",
   "description": "A simple RESTful API for a generic blog website",
   "main": "app.js",
