@@ -106,7 +106,7 @@ describe("Test User Api for Remove", () => {
 
     before(function (done) {
         if (mongoose.connection.readyState === 0) {
-            mongoose.connect(process.env.MONGO);
+            mongoose.connect(process.env.TEST ? "mongodb://127.0.0.1" : database.testing);
             let testSuperUser = new superuserModel();
 
             testSuperUser.user.username = "test";
@@ -174,7 +174,7 @@ describe("Test User Api For Sign In", () => {
 
     before(function (done) {
         if (mongoose.connection.readyState === 0) {
-            mongoose.connect(process.env.MONGO);
+            mongoose.connect(process.env.TEST ? "mongodb://127.0.0.1" : database.testing);
             let testSuperUser = new superuserModel();
 
             testSuperUser.user.username = "test";
