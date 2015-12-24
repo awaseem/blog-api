@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "A simple RESTful API for a generic blog website",
   "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/awaseem/blog-api.git"
+  },
   "scripts": {
     "postinstall": "./node_modules/babel-cli/bin/babel-node.js generateConfigs.js",
     "test": "TEST=true ./node_modules/mocha/bin/mocha --compilers js:babel-register --timeout 15000",
