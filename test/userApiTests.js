@@ -20,7 +20,7 @@ describe("Test User Api for Sign Up", () => {
 
     before(function (done) {
         if (mongoose.connection.readyState === 0) {
-            mongoose.connect(process.env.MONGO, function (err) {
+            mongoose.connect("mongodb://127.0.0.1", function (err) {
                 if (err) {
                     throw err;
                 }

@@ -21,7 +21,7 @@ describe("Test Blog Api", () => {
 
     before(function(done) {
         if (mongoose.connection.readyState === 0) {
-            mongoose.connect(process.env.MONGO);
+            mongoose.connect("mongodb://127.0.0.1");
         }
         let testSuperUser = new superuserModel();
 
