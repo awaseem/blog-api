@@ -32,8 +32,8 @@ app.use(bodyparser.json({
 // Setup production stuff here if you'd like otherwise do dev stuff here
 if (config.get("environment") === "prod") {
     mongoose.connect(config.get("database"));
-    app.use( (err, req, res) => {
-        res.status(500).json({ message: "Error: Server failed to process request!"});
+    app.use( (err, req, res, next) => {
+        return res.status(500).json({ message: "Error: Server failed to process request!"});
     });
 }
 else if (config.get("environment") === "test") {

@@ -12,7 +12,7 @@ or as environment variables:
 ```
 ...
 {
-    "environment": "ENVIRONMENT",
+    "environment": "ENVIRONMENT [prod, test, dev]",
     "database": "DATABASE_URL",
     "testingDatabase": "TESTING_DATABASE_URL",
     "imgurClientId": "IMGUR_CLIENT_ID",

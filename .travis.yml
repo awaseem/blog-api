@@ -4,3 +4,12 @@ node_js:
     - "4.0.0"
 services:
     - mongodb
+    - docker
+before_install:
+    - sleep 15
+    - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+after_success:
+    - docker build -t awaseem/blog-api:$TRAVIS_BRANCH-$TRAVIS_NODE_VERSION .
+    - sleep 10
+    - docker push awaseem/blog-api:$TRAVIS_BRANCH-$TRAVIS_NODE_VERSION
+    - docker logout
