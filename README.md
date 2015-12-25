@@ -1,6 +1,6 @@
 # Blog API
 
-[![Build Status](https://travis-ci.org/awaseem/picture-storage-api.svg?branch=master)](https://travis-ci.org/awaseem/picture-storage-api)
+[![Build Status](https://travis-ci.org/awaseem/blog-api.svg?branch=master)](https://travis-ci.org/awaseem/blog-api)
 
 A simple RESTful API for a generic blog website.
 
