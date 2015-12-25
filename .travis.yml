@@ -1,12 +1,11 @@
-sudo: required
 language: node_js
 node_js:
     - "5.0.0"
     - "4.0.0"
 services:
     - mongodb
-    - docker
 before_install:
+    - sudo service docker start
     - sleep 15
     - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 after_success:
