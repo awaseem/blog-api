@@ -16,6 +16,18 @@ let router = express.Router();
  */
 router.get("/", (req, res, next) => commonRoute.GET(req, res, next, blogModel));
 
+/**
+ * "/:id" GET allows you to retrieve one blog item based on the database id
+ */
+router.get("/:id", (req, res) => {
+     blogModel.findById(req.params.id, (err, results) => {
+         if (err || !results) {
+             return res.status(404).json({ message: `Error: could not find blog with id: ${req.params.id}`});
+         }
+         res.json(results);
+     });
+});
+
 // Private Api
 
 router.use(auth);

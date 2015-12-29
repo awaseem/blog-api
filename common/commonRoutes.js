@@ -5,7 +5,7 @@ export default {
         model.find({
             "group": group,
             "createdOn": {
-                "$lte": dateQuery
+                "$lt": dateQuery
             }
         }, null, { sort: {createdOn: -1}, limit: 9 }, (err, results) => {
             if (err) {
