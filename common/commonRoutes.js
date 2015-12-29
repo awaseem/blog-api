@@ -6,7 +6,8 @@ export default {
             "group": group,
             "createdOn": {
                 "$lt": dateQuery
-            }
+            },
+            "published": req.query.published ? req.query.published : false
         }, null, { sort: {createdOn: -1}, limit: 9 }, (err, results) => {
             if (err) {
                 return res.status(400).json({ message: "Error: could not find items requested"});

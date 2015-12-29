@@ -81,6 +81,9 @@ router.put("/", (req, res) => {
         if (req.body.body) {
             blog.body = req.body.body;
         }
+        if (req.body.published) {
+            blog.published = req.body.published;
+        }
         blog.save((err) => {
             if (err) {
                 return res.status(500).json({ message: message.failedToUpdate });

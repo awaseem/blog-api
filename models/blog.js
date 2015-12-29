@@ -5,7 +5,11 @@ let blog = new mongoose.Schema({
     createdOn: Date,
     body: String,
     author: String,
-    group: String
+    group: String,
+    published: {
+        type: Boolean,
+        default: false
+    }
 });
 
 blog.pre("save", function (next) {
