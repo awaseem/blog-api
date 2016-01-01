@@ -10,7 +10,6 @@ import config from "nconf";
 import expressConfig from "./config/express";
 import { router as blogApi } from "./api/blogApi";
 import { router as userApi } from "./api/userApi";
-import { router as imageApi } from "./api/imageApi";
 import { allowCrossDomain } from "./middlewares/crossDomain";
 
 let app = express();
@@ -46,7 +45,6 @@ else if (config.get("environment") === "dev") {
 // Setup all of our API routes
 app.use("/api/user", userApi);
 app.use("/api/blog", blogApi);
-app.use("/api/image", imageApi);
 
 // Catch any other routes and send a 404
 app.all("*", (req, res) => {
