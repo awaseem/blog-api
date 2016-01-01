@@ -28,6 +28,8 @@ export default {
 
     tokenIsNotProper: "Yo buddy guy you need a token!!!",
 
-    deletedUsername: "Successfully deleted user!"
+    deletedUsername: "Successfully deleted user!",
+
+    signupSecretIncorrect: "Error: Sign up secret is incorrect"
 
 };

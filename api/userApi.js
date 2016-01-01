@@ -86,7 +86,7 @@ router.post("/removeUser", (req, res, next) => {
  * groupDescription (String): summary of group
  */
 router.post("/signup", (req, res) => {
-    if (req.body.username && req.body.password && req.body.groupName && req.body.firstname && req.body.lastname) {
+    if (req.body.username && req.body.password && req.body.groupName && req.body.firstname && req.body.lastname && req.body.signupSecret) {
         superuserModel.findOne({
             "user.username": req.body.username
         }, (err, user) => {
@@ -96,9 +96,10 @@ router.post("/signup", (req, res) => {
             if (user) {
                 return res.status(400).json({ message: message.usernameAlreadyExists });
             }
-            if (!req.body.groupName) {
-                return res.status(400).json({ message: message.groupNameNotGiven });
+            if (req.body.signupSecret !== config.get("signupSecret")) {
+                return res.status(400).json({ message: message.signupSecretIncorrect });
             }
+
             let newSuperUser = new superuserModel();
 
             newSuperUser.user.username = req.body.username;

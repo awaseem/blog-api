@@ -17,5 +17,5 @@ export default {
     noBlogForId: "Error: could not find blog with that ID",
 
     failedToUpdate: "Error: failed to update blog"
-
+    
 };

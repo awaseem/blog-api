@@ -18,7 +18,7 @@ let clearDB = function() {
 };
 
 describe("Test User Api for Sign Up", () => {
-
+    console.log(config.get("signupSecret"));
     before(function (done) {
         if (mongoose.connection.readyState === 0) {
             mongoose.connect(config.get("testingDatabase"), function (err) {
@@ -75,6 +75,18 @@ describe("Test User Api for Sign Up", () => {
         .expect(400, { message: message.properParamsNotGiven }, done);
     });
 
+    it("should fail with only a username, password, firstname, lastname, groupName given", (done) => {
+        request(app)
+        .post(SIGN_UP_API_ROUTE)
+        .send({
+            username: "test",
+            password: "test",
+            firstname: "test",
+            lastname: "test"
+        })
+        .expect(400, { message: message.properParamsNotGiven }, done);
+    });
+
     it("should pass with all required parameters and create a new user", (done) => {
         request(app)
         .post(SIGN_UP_API_ROUTE)
@@ -83,7 +95,8 @@ describe("Test User Api for Sign Up", () => {
             password: "test",
             firstname: "test",
             lastname: "test",
-            groupName: "test"
+            groupName: "test",
+            signupSecret: config.get("signupSecret")
         })
         .expect(200, { message: message.addedUserToDatabase }, done);
     });
@@ -96,7 +109,8 @@ describe("Test User Api for Sign Up", () => {
             password: "test",
             firstname: "test",
             lastname: "test",
-            groupName: "test"
+            groupName: "test",
+            signupSecret: config.get("signupSecret")
         })
         .expect(400, { message: message.usernameAlreadyExists }, done);
     });
