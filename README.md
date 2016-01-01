@@ -17,7 +17,8 @@ or as environment variables:
     "testingDatabase": "TESTING_DATABASE_URL",
     "imgurClientId": "IMGUR_CLIENT_ID",
     "tokenSecret": "TOKEN_SECRET",
-    "tokenExp": "TOKEN_EXP"
+    "tokenExp": "TOKEN_EXP",
+    "signupSecret": "SIGN_UP_SECRET"
 }
 ...
 ```
